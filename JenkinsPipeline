@@ -26,3 +26,37 @@ pipeline{
         
     }
 }
+
+
+
+
+
+pipeline{
+    agent any
+    stages{
+        stage('clone the repo')
+        {
+            steps{
+                git branch: 'main', url: 'https://github.com/rizzoe1/SL-CMAT-CEP1-Jenkins-Ansible'
+            }
+        }
+        
+        stage('install maven & Docker')
+        {
+            steps{
+                ansiblePlaybook credentialsId: 'ansible', disableHostKeyChecking: true, installation: 'myansible', inventory: 'dev.inv', playbook: 'PlaybookInstall.yml'
+            }
+        }
+        
+        stage('Run playbook Deployment')
+    {
+        
+            steps{
+            ansiblePlaybook credentialsId: 'ansible_credentials', disableHostKeyChecking: true, installation: 'myansible', inventory: 'dev.inv', playbook: 'PlaybookDeployment.yml'
+			
+			}
+        
+        }
+        
+    }
+}
